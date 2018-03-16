@@ -1,37 +1,22 @@
 import { createStore } from 'redux';
-import todos from '../reducers/todos';
-import visibilityFilter from '../reducers/visibilityFilter';
+import { throttle } from 'lodash';
+import rootReducer from '../reducers';
+import { loadState, saveState } from './localStorage';
 
-// const rootReducer = (state = {}, action) => {
-//   return {
-//     todos: todos(state.todos, action),
-//     visibilityFilter: visibilityFilter(state.visibilityFilter, action)
-//   }
-// }
+const configureStore = () => {
+  const persisterState = loadState();
+  const store = createStore(rootReducer, persisterState)
 
-const combineReducers = (reducers) => {
-  // return root reducer
-  return (state = {}, action) => {
-    return Object.keys(reducers).reduce((nextState, key) => {
-      return {
-        ...nextState,
-        // compose reducer
-        [key]: reducers[key](
-          state[key],
-          action
-        )
-      }
-    }, {})
-  }
-}
+  store.subscribe(throttle(() => {
+    const {
+      visibilityFilter,
+      ...others
+    } = store.getState();
 
-// rootReducer 是由更小粒度的reducer函数compose的
-const rootReducer = combineReducers({
-  todos,
-  visibilityFilter
-})
+    saveState(others);
+  }, 1000));
 
-export default () => {
-  const store = createStore(rootReducer)
   return store
-}
+};
+
+export default configureStore;
