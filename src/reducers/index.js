@@ -1,4 +1,4 @@
-import todos from './todos/todos';
+import todos from './todos';
 import visibilityFilter from './visibilityFilter';
 
 // const rootReducer = (state = {}, action) => {

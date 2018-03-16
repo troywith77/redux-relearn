@@ -1,11 +1,18 @@
+import cuid from 'cuid';
+
 export const addTodo = text => ({
   type: 'ADD_TODO',
-  text
+  payload: {
+    text,
+    id: cuid()
+  }
 })
 
 export const toggleTodo = id => ({
   type: 'TOGGLE_TODO',
-  id
+  payload: {
+    id
+  }
 })
 
 export const setVisibilityFilter = filter => ({
